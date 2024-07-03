@@ -23,6 +23,15 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glfw)
 
+FetchContent_Declare(
+	microsoft-gsl
+	GIT_REPOSITORY "https://github.com/microsoft/GSL.git"
+	GIT_TAG "v4.0.0"
+	GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(microsoft-gsl)
+
 file(GLOB_RECURSE VulkanEngineSources CONFIGURE_DEPENDS
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
@@ -33,8 +42,17 @@ add_executable(VulkanEngine ${VulkanEngineSources})
 target_link_libraries(VulkanEngine PRIVATE Vulkan::Vulkan)
 target_link_libraries(VulkanEngine PRIVATE glm)
 target_link_libraries(VulkanEngine PRIVATE glfw)
+target_link_libraries(VulkanEngine PRIVATE Microsoft.GSL::GSL)
 
 target_include_directories(VulkanEngine PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 target_compile_features(VulkanEngine PRIVATE cxx_std_20)
 
+target_precompile_headers(VulkanEngine PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/precomp.h")
+
+
+set_target_properties(VulkanEngine PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)
